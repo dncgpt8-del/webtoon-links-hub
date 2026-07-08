@@ -31,7 +31,6 @@ const uiCopy = {
     navHome: "홈",
     navWorks: "전체 작품",
     navCountry: "국가",
-    navLocale: "언어",
     navPlatform: "플랫폼",
     favorites: "즐겨찾기",
     viewGrid: "카드 보기",
@@ -50,15 +49,6 @@ const uiCopy = {
       en: "English",
       ja: "日本語",
     },
-    quickHeading: "바로가기",
-    quickCountry: "국가별 보기",
-    quickCountryDesc: "여러 나라의 정식 연재처 확인",
-    quickLocale: "언어 바꾸기",
-    quickLocaleDesc: "사이트 언어를 변경해서 보기",
-    quickPlatform: "플랫폼별 보기",
-    quickPlatformDesc: "플랫폼별 작품 확인",
-    quickFavorites: "즐겨찾기",
-    quickFavoritesDesc: "내가 저장한 작품 모아보기",
     worksTitle: "전체 작품",
     favoritesTitle: "즐겨찾기",
     resultCount: (works: number, links: number) => `${works} 작품 · ${links} 링크`,
@@ -79,7 +69,6 @@ const uiCopy = {
     detailOverseas: "해외",
     detailOpen: "바로가기",
     detailCopy: "복사",
-    detailStatus: "연재 상태",
     detailSearchHint: "작품명으로 검색 (한국어, 영어, 일본어 가능)",
     countryNames: {
       kr: "국내",
@@ -98,16 +87,12 @@ const uiCopy = {
       th: "태국어",
       id: "인니어",
     },
-    statusNames: {
-      ongoing: "연재중",
-    },
     titleOrder: ["ko", "en", "ja"] as const,
   },
   en: {
     navHome: "Home",
     navWorks: "All Works",
     navCountry: "Country",
-    navLocale: "Language",
     navPlatform: "Platform",
     favorites: "Favorites",
     viewGrid: "Card view",
@@ -126,15 +111,6 @@ const uiCopy = {
       en: "English",
       ja: "Japanese",
     },
-    quickHeading: "Shortcuts",
-    quickCountry: "View by country",
-    quickCountryDesc: "Check official releases across countries",
-    quickLocale: "Change language",
-    quickLocaleDesc: "Switch the site language",
-    quickPlatform: "View by platform",
-    quickPlatformDesc: "Browse works by platform",
-    quickFavorites: "Favorites",
-    quickFavoritesDesc: "Open the works you saved",
     worksTitle: "All works",
     favoritesTitle: "Favorites",
     resultCount: (works: number, links: number) => `${works} works · ${links} links`,
@@ -155,7 +131,6 @@ const uiCopy = {
     detailOverseas: "Overseas",
     detailOpen: "Open",
     detailCopy: "Copy",
-    detailStatus: "Status",
     detailSearchHint: "Search by title (Korean, English, or Japanese)",
     countryNames: {
       kr: "Korea",
@@ -174,16 +149,12 @@ const uiCopy = {
       th: "Thai",
       id: "Indonesian",
     },
-    statusNames: {
-      ongoing: "Ongoing",
-    },
     titleOrder: ["en", "ko", "ja"] as const,
   },
   ja: {
     navHome: "ホーム",
     navWorks: "全作品",
     navCountry: "国",
-    navLocale: "言語",
     navPlatform: "プラットフォーム",
     favorites: "お気に入り",
     viewGrid: "カード表示",
@@ -202,15 +173,6 @@ const uiCopy = {
       en: "英語",
       ja: "日本語",
     },
-    quickHeading: "ショートカット",
-    quickCountry: "国別で見る",
-    quickCountryDesc: "各国の公式配信先を確認",
-    quickLocale: "言語を切替",
-    quickLocaleDesc: "サイトの表示言語を切り替える",
-    quickPlatform: "プラットフォーム別",
-    quickPlatformDesc: "プラットフォームごとに作品を確認",
-    quickFavorites: "お気に入り",
-    quickFavoritesDesc: "保存した作品を見る",
     worksTitle: "全作品",
     favoritesTitle: "お気に入り",
     resultCount: (works: number, links: number) => `${works}作品 · ${links}リンク`,
@@ -231,7 +193,6 @@ const uiCopy = {
     detailOverseas: "海外",
     detailOpen: "開く",
     detailCopy: "コピー",
-    detailStatus: "連載状況",
     detailSearchHint: "作品名で検索（韓国語・英語・日本語）",
     countryNames: {
       kr: "韓国",
@@ -249,9 +210,6 @@ const uiCopy = {
       zh: "中国語",
       th: "タイ語",
       id: "インドネシア語",
-    },
-    statusNames: {
-      ongoing: "連載中",
     },
     titleOrder: ["ja", "ko", "en"] as const,
   },
@@ -280,14 +238,6 @@ function getCountryLabel(country: CountryId, locale: UiLocale) {
 
 function getLocaleLabel(locale: WorkLink["language"], uiLocale: UiLocale) {
   return uiCopy[uiLocale].localeNames[locale as keyof CopyMap["localeNames"]] ?? localeNames[locale];
-}
-
-function getStatusLabel(status: string, locale: UiLocale) {
-  if (status === "연재중") {
-    return uiCopy[locale].statusNames.ongoing;
-  }
-
-  return status;
 }
 
 function readStoredValue<T>(key: string, fallback: T): T {
@@ -372,7 +322,6 @@ function LinkRow({
         {country.flag} {getCountryLabel(link.country, uiLocale)}
       </div>
       <div>{getLocaleLabel(link.language, uiLocale)}</div>
-      <div>{getStatusLabel(link.status, uiLocale)}</div>
       <div className="link-actions">
         <a href={link.url} rel="noreferrer" target="_blank">
           {copy.detailOpen}
@@ -537,6 +486,13 @@ export default function Home() {
     setOnlyFavorites(false);
   }
 
+  function cycleLocale() {
+    setUiLocale((current) => {
+      const currentIndex = uiLocaleOptions.indexOf(current);
+      return uiLocaleOptions[(currentIndex + 1) % uiLocaleOptions.length];
+    });
+  }
+
   async function copyText(value: string, key: string) {
     try {
       await navigator.clipboard.writeText(value);
@@ -577,12 +533,14 @@ export default function Home() {
           favoritesActive={onlyFavorites}
           copy={copy}
           menuOpen={menuOpen}
+          onLocale={cycleLocale}
           onFavorites={() => {
             setOnlyFavorites((value) => !value);
             setSelectedWorkId(null);
           }}
           onHome={() => setSelectedWorkId(null)}
           onMenu={() => setMenuOpen((value) => !value)}
+          uiLocale={uiLocale}
         />
 
         <section className="detail-page">
@@ -656,9 +614,11 @@ export default function Home() {
         favoritesActive={onlyFavorites}
         copy={copy}
         menuOpen={menuOpen}
+        onLocale={cycleLocale}
         onFavorites={() => setOnlyFavorites((value) => !value)}
         onHome={() => resetFilters()}
         onMenu={() => setMenuOpen((value) => !value)}
+        uiLocale={uiLocale}
       />
 
       <section className="home-hero">
@@ -693,20 +653,6 @@ export default function Home() {
                 </option>
               ))}
             </select>
-
-            <div className="locale-switch" aria-label={copy.localeLabel} role="group">
-              {uiLocaleOptions.map((item) => (
-                <button
-                  aria-pressed={uiLocale === item}
-                  className={uiLocale === item ? "active" : ""}
-                  key={item}
-                  onClick={() => setUiLocale(item)}
-                  type="button"
-                >
-                  {copy.localeOptions[item]}
-                </button>
-              ))}
-            </div>
 
             <select
               onChange={(event) =>
@@ -772,15 +718,15 @@ export default function Home() {
                 <WorkCard
                   favorite={favorites.includes(work.id)}
                   key={work.id}
-                onFavorite={toggleFavorite}
-                onSelect={setSelectedWorkId}
-                viewMode={viewMode}
-                copy={copy}
-                uiLocale={uiLocale}
-                work={work}
-                visibleLinks={visibleLinks}
-                domesticCount={domesticCount}
-                overseasCount={overseasCount}
+                  onFavorite={toggleFavorite}
+                  onSelect={setSelectedWorkId}
+                  viewMode={viewMode}
+                  copy={copy}
+                  uiLocale={uiLocale}
+                  work={work}
+                  visibleLinks={visibleLinks}
+                  domesticCount={domesticCount}
+                  overseasCount={overseasCount}
                 />
               );
             })}
@@ -818,6 +764,8 @@ function Header({
   onFavorites,
   onHome,
   onMenu,
+  onLocale,
+  uiLocale,
 }: {
   favoritesActive: boolean;
   copy: CopyMap;
@@ -825,6 +773,8 @@ function Header({
   onFavorites: () => void;
   onHome: () => void;
   onMenu: () => void;
+  onLocale: () => void;
+  uiLocale: UiLocale;
 }) {
   return (
     <header className="topbar" id="top">
@@ -838,16 +788,26 @@ function Header({
         </button>
         <button type="button">{copy.navWorks}</button>
         <button type="button">{copy.navCountry}</button>
-        <button type="button">{copy.navLocale}</button>
         <button type="button">{copy.navPlatform}</button>
       </nav>
-      <button
-        className={`favorite-link ${favoritesActive ? "active" : ""}`}
-        onClick={onFavorites}
-        type="button"
-      >
-        ★ {copy.favorites}
-      </button>
+      <div className="topbar-actions">
+        <button
+          className={`favorite-link ${favoritesActive ? "active" : ""}`}
+          onClick={onFavorites}
+          type="button"
+        >
+          ★ {copy.favorites}
+        </button>
+        <button
+          aria-label={copy.localeLabel}
+          className="locale-link"
+          onClick={onLocale}
+          title={copy.localeLabel}
+          type="button"
+        >
+          🌐 {copy.localeOptions[uiLocale]}
+        </button>
+      </div>
       <button className="menu-button" onClick={onMenu} type="button">
         ☰
       </button>
