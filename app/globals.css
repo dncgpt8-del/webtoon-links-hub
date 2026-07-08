@@ -141,7 +141,7 @@ a {
 
 .home-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 32px;
   max-width: 1180px;
   margin: 0 auto;
@@ -250,7 +250,6 @@ a {
   color: var(--violet);
 }
 
-.quick-panel,
 .official-panel {
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -258,57 +257,10 @@ a {
   box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
 }
 
-.quick-panel {
-  align-self: start;
-  padding: 22px;
-}
-
-.quick-panel h2,
 .official-panel h2 {
   margin: 0;
   font-size: 18px;
   font-weight: 950;
-}
-
-.quick-panel button {
-  display: grid;
-  grid-template-columns: 42px 1fr;
-  gap: 0 12px;
-  width: 100%;
-  padding: 18px 0;
-  border: 0;
-  border-top: 1px solid var(--line);
-  background: transparent;
-  text-align: left;
-}
-
-.quick-panel button:first-of-type {
-  margin-top: 16px;
-}
-
-.quick-panel button span {
-  grid-row: span 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  background: var(--violet-soft);
-  color: var(--violet);
-  font-weight: 900;
-}
-
-.quick-panel strong {
-  font-size: 14px;
-  font-weight: 950;
-}
-
-.quick-panel small {
-  margin-top: 5px;
-  color: #667085;
-  font-size: 12px;
-  font-weight: 700;
 }
 
 .content-layout {
@@ -813,7 +765,6 @@ a {
     gap: 22px;
   }
 
-  .quick-panel,
   .footer {
     display: none;
   }

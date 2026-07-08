@@ -537,13 +537,6 @@ export default function Home() {
     setOnlyFavorites(false);
   }
 
-  function cycleLocale() {
-    setUiLocale((current) => {
-      const currentIndex = uiLocaleOptions.indexOf(current);
-      return uiLocaleOptions[(currentIndex + 1) % uiLocaleOptions.length];
-    });
-  }
-
   async function copyText(value: string, key: string) {
     try {
       await navigator.clipboard.writeText(value);
@@ -734,30 +727,6 @@ export default function Home() {
             </button>
           </div>
         </div>
-
-        <aside className="quick-panel">
-          <h2>{copy.quickHeading}</h2>
-          <button onClick={() => setCountry("kr")} type="button">
-            <span>🌐</span>
-            <strong>{copy.quickCountry}</strong>
-            <small>{copy.quickCountryDesc}</small>
-          </button>
-          <button onClick={cycleLocale} type="button">
-            <span>文</span>
-            <strong>{copy.quickLocale}</strong>
-            <small>{copy.localeOptions[uiLocale]}</small>
-          </button>
-          <button onClick={() => setPlatform("kakao")} type="button">
-            <span>▦</span>
-            <strong>{copy.quickPlatform}</strong>
-            <small>{copy.quickPlatformDesc}</small>
-          </button>
-          <button onClick={() => setOnlyFavorites((value) => !value)} type="button">
-            <span>♡</span>
-            <strong>{copy.quickFavorites}</strong>
-            <small>{copy.quickFavoritesDesc}</small>
-          </button>
-        </aside>
       </section>
 
       <section className="content-layout">
