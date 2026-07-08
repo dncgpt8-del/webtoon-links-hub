@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-label="작품 링크 허브 웹사이트 예시 화면">
+  <rect width="1200" height="760" fill="#f8f4ec"/>
+  <rect x="0" y="0" width="1200" height="198" fill="#fffaf1"/>
+  <line x1="0" y1="198" x2="1200" y2="198" stroke="#d8d1c3"/>
+
+  <text x="72" y="54" fill="#a04f3e" font-family="Arial, Noto Sans KR, sans-serif" font-size="13" font-weight="700" letter-spacing="2">OFFICIAL PLATFORM INDEX</text>
+  <text x="72" y="103" fill="#202326" font-family="Arial, Noto Sans KR, sans-serif" font-size="44" font-weight="900">작품 링크 허브</text>
+  <text x="72" y="138" fill="#5f625f" font-family="Arial, Noto Sans KR, sans-serif" font-size="17" font-weight="600">국내 및 해외 정식 플랫폼 링크를 작품별로 빠르게 찾습니다.</text>
+
+  <rect x="874" y="58" width="84" height="40" rx="6" fill="#1f2328"/>
+  <text x="896" y="83" fill="#fff" font-family="Arial, Noto Sans KR, sans-serif" font-size="14" font-weight="800">한국어</text>
+  <rect x="966" y="58" width="84" height="40" rx="6" fill="#fff" stroke="#d8d1c3"/>
+  <text x="984" y="83" fill="#454945" font-family="Arial, sans-serif" font-size="14" font-weight="800">English</text>
+  <rect x="1058" y="58" width="70" height="40" rx="6" fill="#fff" stroke="#d8d1c3"/>
+  <text x="1075" y="83" fill="#454945" font-family="Arial, sans-serif" font-size="14" font-weight="800">日本語</text>
+
+  <rect x="72" y="152" width="622" height="46" rx="6" fill="#fff" stroke="#cfc6b6"/>
+  <text x="94" y="181" fill="#858780" font-family="Arial, Noto Sans KR, sans-serif" font-size="15" font-weight="700">작품명, 별칭, 나라명, 플랫폼 검색</text>
+  <rect x="710" y="152" width="162" height="46" rx="6" fill="#fff" stroke="#cfc6b6"/>
+  <text x="730" y="181" fill="#454945" font-family="Arial, Noto Sans KR, sans-serif" font-size="14" font-weight="800">🌍 전체 국가</text>
+  <rect x="886" y="152" width="162" height="46" rx="6" fill="#fff" stroke="#cfc6b6"/>
+  <text x="906" y="181" fill="#454945" font-family="Arial, Noto Sans KR, sans-serif" font-size="14" font-weight="800">전체 언어</text>
+
+  <rect x="72" y="218" width="116" height="40" rx="6" fill="#fff" stroke="#d8d1c3"/>
+  <text x="93" y="243" fill="#454945" font-family="Arial, Noto Sans KR, sans-serif" font-size="14" font-weight="900">★ 전체 작품</text>
+  <rect x="198" y="218" width="70" height="40" rx="6" fill="#1f2328"/>
+  <text x="219" y="243" fill="#fff" font-family="Arial, Noto Sans KR, sans-serif" font-size="14" font-weight="900">관리</text>
+  <rect x="278" y="218" width="118" height="40" rx="6" fill="#fff" stroke="#d8d1c3"/>
+  <text x="299" y="243" fill="#454945" font-family="Arial, Noto Sans KR, sans-serif" font-size="14" font-weight="900">순서 초기화</text>
+
+  <text x="72" y="300" fill="#454945" font-family="Arial, Noto Sans KR, sans-serif" font-size="15" font-weight="900">6 작품 · 17 링크</text>
+
+  <rect x="72" y="322" width="800" height="176" rx="8" fill="#fff" stroke="#d8d1c3"/>
+  <text x="100" y="366" fill="#202326" font-family="Arial, Noto Sans KR, sans-serif" font-size="26" font-weight="900">북쪽 정원의 마법사</text>
+  <text x="100" y="392" fill="#666963" font-family="Arial, Noto Sans KR, sans-serif" font-size="14" font-weight="700">북쪽 정원의 마법사 / The Magician of the Northern Garden / 北の庭園の魔法使い</text>
+  <rect x="704" y="342" width="42" height="38" rx="6" fill="#ffe6bd" stroke="#d98933"/>
+  <text x="718" y="367" fill="#7c3f10" font-family="Arial, sans-serif" font-size="17" font-weight="900">★</text>
+  <rect x="754" y="342" width="42" height="38" rx="6" fill="#fff" stroke="#d8d1c3"/>
+  <text x="768" y="367" fill="#454945" font-family="Arial, sans-serif" font-size="17" font-weight="900">⧉</text>
+  <rect x="804" y="342" width="42" height="38" rx="6" fill="#fff" stroke="#d8d1c3"/>
+  <text x="818" y="367" fill="#454945" font-family="Arial, sans-serif" font-size="17" font-weight="900">↑</text>
+
+  <rect x="100" y="424" width="232" height="56" rx="6" fill="#fffdf8" stroke="#ded6c8"/>
+  <rect x="116" y="436" width="34" height="34" rx="6" fill="#ffe9a8"/>
+  <text x="128" y="459" fill="#6b4b00" font-family="Arial, sans-serif" font-size="15" font-weight="900">K</text>
+  <text x="162" y="449" fill="#202326" font-family="Arial, sans-serif" font-size="13" font-weight="900">KakaoPage KR</text>
+  <text x="162" y="467" fill="#686c66" font-family="Arial, Noto Sans KR, sans-serif" font-size="12" font-weight="700">🇰🇷 한국 · 한국어</text>
+  <rect x="282" y="438" width="36" height="30" rx="5" fill="#1f2328"/>
+  <text x="292" y="458" fill="#fff" font-family="Arial, Noto Sans KR, sans-serif" font-size="11" font-weight="900">열기</text>
+
+  <rect x="348" y="424" width="232" height="56" rx="6" fill="#fffdf8" stroke="#ded6c8"/>
+  <rect x="364" y="436" width="34" height="34" rx="6" fill="#ffe0c2"/>
+  <text x="376" y="459" fill="#914411" font-family="Arial, sans-serif" font-size="15" font-weight="900">P</text>
+  <text x="410" y="449" fill="#202326" font-family="Arial, sans-serif" font-size="13" font-weight="900">Piccoma JP</text>
+  <text x="410" y="467" fill="#686c66" font-family="Arial, Noto Sans KR, sans-serif" font-size="12" font-weight="700">🇯🇵 일본 · 日本語</text>
+  <rect x="530" y="438" width="36" height="30" rx="5" fill="#1f2328"/>
+  <text x="540" y="458" fill="#fff" font-family="Arial, Noto Sans KR, sans-serif" font-size="11" font-weight="900">열기</text>
+
+  <rect x="596" y="424" width="232" height="56" rx="6" fill="#fffdf8" stroke="#ded6c8"/>
+  <rect x="612" y="436" width="34" height="34" rx="6" fill="#e5e6ff"/>
+  <text x="624" y="459" fill="#373a8a" font-family="Arial, sans-serif" font-size="15" font-weight="900">T</text>
+  <text x="658" y="449" fill="#202326" font-family="Arial, sans-serif" font-size="13" font-weight="900">Tapas EN</text>
+  <text x="658" y="467" fill="#686c66" font-family="Arial, Noto Sans KR, sans-serif" font-size="12" font-weight="700">🇺🇸 미국 · English</text>
+  <rect x="778" y="438" width="36" height="30" rx="5" fill="#1f2328"/>
+  <text x="788" y="458" fill="#fff" font-family="Arial, Noto Sans KR, sans-serif" font-size="11" font-weight="900">열기</text>
+
+  <rect x="72" y="518" width="800" height="134" rx="8" fill="#fff" stroke="#d8d1c3"/>
+  <text x="100" y="562" fill="#202326" font-family="Arial, Noto Sans KR, sans-serif" font-size="25" font-weight="900">자정의 도서관</text>
+  <text x="100" y="588" fill="#666963" font-family="Arial, Noto Sans KR, sans-serif" font-size="14" font-weight="700">자정의 도서관 / Midnight Archive / 真夜中の書庫</text>
+  <rect x="100" y="612" width="232" height="26" rx="6" fill="#fffdf8" stroke="#ded6c8"/>
+  <text x="116" y="630" fill="#202326" font-family="Arial, Noto Sans KR, sans-serif" font-size="12" font-weight="800">N  Naver KR · 🇰🇷 한국</text>
+  <rect x="348" y="612" width="232" height="26" rx="6" fill="#fffdf8" stroke="#ded6c8"/>
+  <text x="364" y="630" fill="#202326" font-family="Arial, Noto Sans KR, sans-serif" font-size="12" font-weight="800">W  WEBTOON Global · 🌍 글로벌</text>
+
+  <rect x="914" y="244" width="234" height="424" rx="26" fill="#202326"/>
+  <rect x="928" y="272" width="206" height="368" rx="18" fill="#fffaf1"/>
+  <text x="946" y="314" fill="#202326" font-family="Arial, Noto Sans KR, sans-serif" font-size="24" font-weight="900">작품 링크 허브</text>
+  <rect x="946" y="338" width="170" height="38" rx="6" fill="#fff" stroke="#cfc6b6"/>
+  <text x="960" y="362" fill="#858780" font-family="Arial, Noto Sans KR, sans-serif" font-size="12" font-weight="800">작품명 검색</text>
+  <rect x="946" y="388" width="170" height="34" rx="6" fill="#fff" stroke="#d8d1c3"/>
+  <text x="962" y="410" fill="#454945" font-family="Arial, Noto Sans KR, sans-serif" font-size="12" font-weight="900">🌍 전체 국가</text>
+  <rect x="946" y="438" width="170" height="110" rx="8" fill="#fff" stroke="#d8d1c3"/>
+  <text x="962" y="466" fill="#202326" font-family="Arial, Noto Sans KR, sans-serif" font-size="16" font-weight="900">북쪽 정원의 마법사</text>
+  <text x="962" y="492" fill="#686c66" font-family="Arial, Noto Sans KR, sans-serif" font-size="11" font-weight="800">KakaoPage KR</text>
+  <text x="962" y="512" fill="#686c66" font-family="Arial, Noto Sans KR, sans-serif" font-size="11" font-weight="800">🇰🇷 한국 · 한국어</text>
+  <rect x="1036" y="516" width="38" height="24" rx="5" fill="#1f2328"/>
+  <text x="1046" y="532" fill="#fff" font-family="Arial, Noto Sans KR, sans-serif" font-size="10" font-weight="900">열기</text>
+  <rect x="1078" y="516" width="28" height="24" rx="5" fill="#fff" stroke="#d8d1c3"/>
+  <text x="1087" y="532" fill="#454945" font-family="Arial, sans-serif" font-size="10" font-weight="900">⧉</text>
+</svg>
