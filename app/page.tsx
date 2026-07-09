@@ -233,23 +233,12 @@ function getPrimaryTitle(work: WorkItem, locale: UiLocale) {
 
 function getSecondaryTitles(work: WorkItem, locale: UiLocale) {
   const primary = getPrimaryTitle(work, locale);
-  const orderedLocales = uiCopy[locale].titleOrder as readonly string[];
-  const orderedEntries = Object.entries(work.title)
-    .filter(([, title]) => Boolean(title))
-    .sort(([leftKey, leftTitle], [rightKey, rightTitle]) => {
-      const leftIndex = orderedLocales.indexOf(leftKey);
-      const rightIndex = orderedLocales.indexOf(rightKey);
+  const secondaryTitles = [work.title.en, work.title.ja]
+    .filter((title): title is string => Boolean(title))
+    .filter((title, index, titles) => titles.indexOf(title) === index)
+    .filter((title) => title !== primary);
 
-      if (leftIndex !== rightIndex) {
-        return (leftIndex === -1 ? Number.MAX_SAFE_INTEGER : leftIndex) -
-          (rightIndex === -1 ? Number.MAX_SAFE_INTEGER : rightIndex);
-      }
-
-      return leftTitle.localeCompare(rightTitle);
-    })
-    .map(([, title]) => title);
-
-  return Array.from(new Set(orderedEntries)).filter((title) => title !== primary).join(" · ");
+  return secondaryTitles.join(" · ");
 }
 
 function getCountryLabel(country: string, locale: UiLocale) {
