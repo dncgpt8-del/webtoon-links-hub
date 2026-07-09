@@ -30,6 +30,8 @@ const storageKeys = {
   locale: "webtoonLinks:locale",
 };
 
+const emptyCatalog: WorkItem[] = [];
+
 const uiLocaleOptions = ["ko", "en", "ja"] as const;
 const titleDisplayOrder = ["ko", "en", "ja", "zh", "fr", "th", "id"] as const;
 
@@ -471,7 +473,7 @@ function LinkGroup({
 }
 
 export default function Home() {
-  const [catalogData, setCatalogData] = useState<WorkItem[]>(catalog);
+  const [catalogData, setCatalogData] = useState<WorkItem[] | null>(null);
   const [query, setQuery] = useState("");
   const [country, setCountry] = useState<FilterValue<string>>("all");
   const [uiLocale, setUiLocale] = useState<UiLocale>(() => {
@@ -491,6 +493,8 @@ export default function Home() {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const copy = uiCopy[uiLocale];
   const seededDetailHistoryRef = useRef(false);
+  const isCatalogReady = catalogData !== null;
+  const activeCatalogData = catalogData ?? emptyCatalog;
 
   useEffect(() => {
     window.localStorage.setItem(storageKeys.locale, uiLocale);
@@ -561,13 +565,13 @@ export default function Home() {
     };
   }, []);
 
-  const countryOptions = useMemo(() => collectCountryOptions(catalogData), [catalogData]);
-  const platformOptions = useMemo(() => collectPlatformOptions(catalogData), [catalogData]);
+  const countryOptions = useMemo(() => collectCountryOptions(activeCatalogData), [activeCatalogData]);
+  const platformOptions = useMemo(() => collectPlatformOptions(activeCatalogData), [activeCatalogData]);
 
   const filteredWorks = useMemo(() => {
     const normalizedQuery = normalize(query);
 
-    return catalogData
+    return activeCatalogData
       .filter((work) => !work.hidden)
       .filter((work) => work.links.some((link) => isCountrySelected(link, country) && isPlatformSelected(link, platform)))
       .filter((work) => {
@@ -577,10 +581,10 @@ export default function Home() {
 
         return buildSearchableText(work).includes(normalizedQuery);
       });
-  }, [catalogData, country, platform, query]);
+  }, [activeCatalogData, country, platform, query]);
 
   const selectedWork = selectedWorkId
-    ? catalogData.find((work) => work.id === selectedWorkId) ?? null
+    ? activeCatalogData.find((work) => work.id === selectedWorkId) ?? null
     : null;
 
   function resetFilters() {
@@ -794,40 +798,46 @@ export default function Home() {
             </div>
           </div>
 
-          <p className="result-count">
-            {copy.resultCount(filteredWorks.length, totalLinks)}
-          </p>
+            {isCatalogReady ? (
+              <>
+                <p className="result-count">
+                  {copy.resultCount(filteredWorks.length, totalLinks)}
+                </p>
 
-          <div className={viewMode === "grid" ? "work-grid" : "work-list"}>
-            {filteredWorks.map((work) => {
-              const visibleLinks = work.links.filter((link) => {
-                return isCountrySelected(link, country) && isPlatformSelected(link, platform);
-              });
-              const domesticCount = visibleLinks.filter(
-                (link) => link.region === "domestic",
-              ).length;
-              const overseasCount = visibleLinks.length - domesticCount;
+                <div className={viewMode === "grid" ? "work-grid" : "work-list"}>
+                  {filteredWorks.map((work) => {
+                    const visibleLinks = work.links.filter((link) => {
+                      return isCountrySelected(link, country) && isPlatformSelected(link, platform);
+                    });
+                    const domesticCount = visibleLinks.filter(
+                      (link) => link.region === "domestic",
+                    ).length;
+                    const overseasCount = visibleLinks.length - domesticCount;
 
-              return (
-                <WorkCard
-                  key={work.id}
-                  onSelect={openWork}
-                  viewMode={viewMode}
-                  copy={copy}
-                  uiLocale={uiLocale}
-                  work={work}
-                  visibleLinks={visibleLinks}
-                  domesticCount={domesticCount}
-                  overseasCount={overseasCount}
-                />
-              );
-            })}
+                    return (
+                      <WorkCard
+                        key={work.id}
+                        onSelect={openWork}
+                        viewMode={viewMode}
+                        copy={copy}
+                        uiLocale={uiLocale}
+                        work={work}
+                        visibleLinks={visibleLinks}
+                        domesticCount={domesticCount}
+                        overseasCount={overseasCount}
+                      />
+                    );
+                  })}
+                </div>
+                {filteredWorks.length === 0 ? (
+                  <div className="empty-state">{copy.emptyState}</div>
+                ) : null}
+              </>
+            ) : (
+              <div className="empty-state">작품 목록을 불러오는 중...</div>
+            )}
           </div>
-          {filteredWorks.length === 0 ? (
-            <div className="empty-state">{copy.emptyState}</div>
-          ) : null}
-        </div>
-      </section>
+        </section>
 
       <footer className="footer">
         <strong>🌐 WEBTOON LINKS</strong>
