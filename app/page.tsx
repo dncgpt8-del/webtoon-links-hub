@@ -35,15 +35,9 @@ const titleDisplayOrder = ["ko", "en", "ja", "zh", "fr", "th", "id"] as const;
 
 const uiCopy = {
   ko: {
-    navHome: "홈",
-    navWorks: "전체 작품",
-    navCountry: "국가",
-    navPlatform: "플랫폼",
     viewGrid: "카드 보기",
     viewList: "리스트 보기",
-    heroPrefix: "전 세계 모든",
-    heroHighlight: "정식 연재처",
-    heroSuffix: "를 한눈에",
+    heroTitle: "디앤씨웹툰 정식 사이트",
     heroDescription: "국내, 해외 모든 플랫폼의 정식 연재 웹툰 링크를 확인하세요.",
     searchPlaceholder: "작품명 또는 별칭으로 검색",
     countryAll: "국가 전체",
@@ -66,7 +60,6 @@ const uiCopy = {
     detailOfficial: "정식 연재처",
     detailLinkCount: (count: number) => `${count}개 정식 링크`,
     detailMetaSuffix: "링크 복사 지원",
-    detailShare: "공유하기",
     detailShared: "복사됨",
     detailDomestic: "국내",
     detailOverseas: "해외",
@@ -100,15 +93,9 @@ const uiCopy = {
     titleOrder: titleDisplayOrder,
   },
   en: {
-    navHome: "Home",
-    navWorks: "All Works",
-    navCountry: "Country",
-    navPlatform: "Platform",
     viewGrid: "Card view",
     viewList: "List view",
-    heroPrefix: "All",
-    heroHighlight: "official release platforms",
-    heroSuffix: "in one place",
+    heroTitle: "D&C Webtoon official site",
     heroDescription: "Find official webtoon links across domestic and overseas platforms.",
     searchPlaceholder: "Search by title or alias",
     countryAll: "All countries",
@@ -131,7 +118,6 @@ const uiCopy = {
     detailOfficial: "Official release sites",
     detailLinkCount: (count: number) => `${count} official links`,
     detailMetaSuffix: "Link copy supported",
-    detailShare: "Share",
     detailShared: "Copied",
     detailDomestic: "Domestic",
     detailOverseas: "Overseas",
@@ -165,15 +151,9 @@ const uiCopy = {
     titleOrder: ["en", "ko", "ja", "zh", "fr", "th", "id"] as const,
   },
   ja: {
-    navHome: "ホーム",
-    navWorks: "全作品",
-    navCountry: "国",
-    navPlatform: "プラットフォーム",
     viewGrid: "カード表示",
     viewList: "リスト表示",
-    heroPrefix: "世界中の",
-    heroHighlight: "公式連載先",
-    heroSuffix: "をひと目で",
+    heroTitle: "ディーアンドシーウェブトゥーン公式サイト",
     heroDescription: "国内・海外の公式ウェブトゥーン配信先をまとめて確認できます。",
     searchPlaceholder: "作品名または別名で検索",
     countryAll: "国すべて",
@@ -196,7 +176,6 @@ const uiCopy = {
     detailOfficial: "公式連載先",
     detailLinkCount: (count: number) => `${count}件の公式リンク`,
     detailMetaSuffix: "リンクコピーに対応",
-    detailShare: "共有",
     detailShared: "コピー済み",
     detailDomestic: "国内",
     detailOverseas: "海外",
@@ -501,7 +480,6 @@ export default function Home() {
   });
   const [platform, setPlatform] = useState<FilterValue<string>>("all");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
-  const [menuOpen, setMenuOpen] = useState(false);
   const [selectedWorkId, setSelectedWorkId] = useState<string | null>(() => {
     if (typeof window === "undefined") {
       return null;
@@ -671,12 +649,6 @@ export default function Home() {
     window.setTimeout(() => setCopiedKey(null), 1400);
   }
 
-  async function copyWorkLink(workId: string) {
-    const url = new URL(window.location.href);
-    url.searchParams.set("work", workId);
-    await copyText(url.toString(), `work-${workId}`);
-  }
-
   if (selectedWork) {
     const domesticLinks = selectedWork.links.filter(
       (link) => link.region === "domestic",
@@ -689,10 +661,8 @@ export default function Home() {
       <main className="site-shell detail-shell">
         <Header
           copy={copy}
-          menuOpen={menuOpen}
           onLocale={cycleLocale}
           onHome={closeWork}
-          onMenu={() => setMenuOpen((value) => !value)}
           uiLocale={uiLocale}
         />
 
@@ -716,15 +686,6 @@ export default function Home() {
               <p className="work-meta">
                 {copy.detailLinkCount(selectedWork.links.length)} · {copy.detailMetaSuffix}
               </p>
-              <div className="detail-actions">
-                <button
-                  className="secondary-action"
-                  onClick={() => copyWorkLink(selectedWork.id)}
-                  type="button"
-                >
-                  {copiedKey === `work-${selectedWork.id}` ? copy.detailShared : copy.detailShare}
-                </button>
-              </div>
             </div>
           </div>
 
@@ -758,19 +719,15 @@ export default function Home() {
     <main className="site-shell">
       <Header
         copy={copy}
-        menuOpen={menuOpen}
         onLocale={cycleLocale}
         onHome={() => resetFilters()}
-        onMenu={() => setMenuOpen((value) => !value)}
         uiLocale={uiLocale}
       />
 
       <section className="home-hero">
         <div className="hero-main">
           <h1>
-            {copy.heroPrefix} <span>{copy.heroHighlight}</span>
-            {" "}
-            {copy.heroSuffix}
+            {copy.heroTitle}
           </h1>
           <p>{copy.heroDescription}</p>
 
@@ -882,16 +839,12 @@ export default function Home() {
 
 function Header({
   copy,
-  menuOpen,
   onHome,
-  onMenu,
   onLocale,
   uiLocale,
 }: {
   copy: CopyMap;
-  menuOpen: boolean;
   onHome: () => void;
-  onMenu: () => void;
   onLocale: () => void;
   uiLocale: UiLocale;
 }) {
@@ -901,14 +854,6 @@ function Header({
         <span>🌐</span>
         WEBTOON LINKS
       </button>
-      <nav className={`top-nav ${menuOpen ? "open" : ""}`}>
-        <button className="active" onClick={onHome} type="button">
-          {copy.navHome}
-        </button>
-        <button type="button">{copy.navWorks}</button>
-        <button type="button">{copy.navCountry}</button>
-        <button type="button">{copy.navPlatform}</button>
-      </nav>
       <div className="topbar-actions">
         <button
           aria-label={copy.localeLabel}
@@ -920,9 +865,6 @@ function Header({
           🌐 {copy.localeOptions[uiLocale]}
         </button>
       </div>
-      <button className="menu-button" onClick={onMenu} type="button">
-        ☰
-      </button>
     </header>
   );
 }
