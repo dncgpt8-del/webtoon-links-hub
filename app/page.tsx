@@ -4,11 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import {
   catalog,
-  countries,
-  CountryId,
-  localeNames,
-  PlatformId,
-  platforms,
+  getCountryMeta,
+  getLocaleLabel as getLanguageLabel,
+  getPlatformMeta,
   WorkItem,
   WorkLink,
 } from "./catalog-data";
@@ -16,6 +14,17 @@ import {
 type ViewMode = "grid" | "list";
 type FilterValue<T extends string> = T | "all";
 type UiLocale = "ko" | "en" | "ja";
+type CountryOption = {
+  id: string;
+  name: string;
+  flag: string;
+};
+type PlatformOption = {
+  id: string;
+  name: string;
+  icon: string;
+  tone: string;
+};
 
 const storageKeys = {
   favorites: "webtoonLinks:favorites",
@@ -23,8 +32,7 @@ const storageKeys = {
 };
 
 const uiLocaleOptions = ["ko", "en", "ja"] as const;
-const countryOptions = Object.keys(countries) as CountryId[];
-const platformOptions = Object.keys(platforms) as PlatformId[];
+const titleDisplayOrder = ["ko", "en", "ja", "zh", "fr", "th", "id"] as const;
 
 const uiCopy = {
   ko: {
@@ -39,7 +47,7 @@ const uiCopy = {
     heroHighlight: "정식 연재처",
     heroSuffix: "를 한눈에",
     heroDescription: "국내, 해외 모든 플랫폼의 정식 연재 웹툰 링크를 확인하세요.",
-    searchPlaceholder: "작품명으로 검색 (한국어, 영어, 일본어 가능)",
+    searchPlaceholder: "작품명 또는 별칭으로 검색",
     countryAll: "국가 전체",
     platformAll: "플랫폼 전체",
     reset: "초기화",
@@ -56,7 +64,7 @@ const uiCopy = {
       `국내 ${domestic} · 해외 ${overseas} · 전체 ${total}`,
     cardFavorite: "즐겨찾기",
     emptyState: "조건에 맞는 작품이 없습니다.",
-    footerNote: "즐겨찾기는 브라우저에 저장됩니다.",
+    footerNote: "즐겨찾기는 브라우저에 저장되고, 작품 데이터는 구글 시트에서 자동 반영됩니다.",
     detailHome: "홈",
     detailList: "작품 목록",
     detailOfficial: "정식 연재처",
@@ -69,7 +77,7 @@ const uiCopy = {
     detailOverseas: "해외",
     detailOpen: "바로가기",
     detailCopy: "복사",
-    detailSearchHint: "작품명으로 검색 (한국어, 영어, 일본어 가능)",
+    detailSearchHint: "작품명 또는 별칭으로 검색",
     countryNames: {
       kr: "국내",
       jp: "일본",
@@ -86,8 +94,15 @@ const uiCopy = {
       zh: "중국어",
       th: "태국어",
       id: "인니어",
+      fr: "프랑스어",
+      es: "스페인어",
+      de: "독일어",
+      pt: "포르투갈어",
+      ru: "러시아어",
+      vi: "베트남어",
+      ar: "아랍어",
     },
-    titleOrder: ["ko", "en", "ja"] as const,
+    titleOrder: titleDisplayOrder,
   },
   en: {
     navHome: "Home",
@@ -101,7 +116,7 @@ const uiCopy = {
     heroHighlight: "official release platforms",
     heroSuffix: "in one place",
     heroDescription: "Find official webtoon links across domestic and overseas platforms.",
-    searchPlaceholder: "Search by title (Korean, English, or Japanese)",
+    searchPlaceholder: "Search by title or alias",
     countryAll: "All countries",
     platformAll: "All platforms",
     reset: "Reset",
@@ -118,7 +133,7 @@ const uiCopy = {
       `Domestic ${domestic} · Overseas ${overseas} · Total ${total}`,
     cardFavorite: "Favorite",
     emptyState: "No works match the current filters.",
-    footerNote: "Favorites are saved in your browser.",
+    footerNote: "Favorites stay in your browser, and work data refreshes from Google Sheets.",
     detailHome: "Home",
     detailList: "Work list",
     detailOfficial: "Official release sites",
@@ -131,7 +146,7 @@ const uiCopy = {
     detailOverseas: "Overseas",
     detailOpen: "Open",
     detailCopy: "Copy",
-    detailSearchHint: "Search by title (Korean, English, or Japanese)",
+    detailSearchHint: "Search by title or alias",
     countryNames: {
       kr: "Korea",
       jp: "Japan",
@@ -148,8 +163,15 @@ const uiCopy = {
       zh: "Chinese",
       th: "Thai",
       id: "Indonesian",
+      fr: "French",
+      es: "Spanish",
+      de: "German",
+      pt: "Portuguese",
+      ru: "Russian",
+      vi: "Vietnamese",
+      ar: "Arabic",
     },
-    titleOrder: ["en", "ko", "ja"] as const,
+    titleOrder: ["en", "ko", "ja", "zh", "fr", "th", "id"] as const,
   },
   ja: {
     navHome: "ホーム",
@@ -163,7 +185,7 @@ const uiCopy = {
     heroHighlight: "公式連載先",
     heroSuffix: "をひと目で",
     heroDescription: "国内・海外の公式ウェブトゥーン配信先をまとめて確認できます。",
-    searchPlaceholder: "作品名で検索（韓国語・英語・日本語）",
+    searchPlaceholder: "作品名または別名で検索",
     countryAll: "国すべて",
     platformAll: "全プラットフォーム",
     reset: "リセット",
@@ -180,7 +202,7 @@ const uiCopy = {
       `国内 ${domestic} · 海外 ${overseas} · 合計 ${total}`,
     cardFavorite: "お気に入り",
     emptyState: "条件に合う作品がありません。",
-    footerNote: "お気に入りはブラウザに保存されます。",
+    footerNote: "お気に入りはブラウザに保存され、作品データはGoogleスプレッドシートから反映されます。",
     detailHome: "ホーム",
     detailList: "作品一覧",
     detailOfficial: "公式連載先",
@@ -193,7 +215,7 @@ const uiCopy = {
     detailOverseas: "海外",
     detailOpen: "開く",
     detailCopy: "コピー",
-    detailSearchHint: "作品名で検索（韓国語・英語・日本語）",
+    detailSearchHint: "作品名または別名で検索",
     countryNames: {
       kr: "韓国",
       jp: "日本",
@@ -210,8 +232,15 @@ const uiCopy = {
       zh: "中国語",
       th: "タイ語",
       id: "インドネシア語",
+      fr: "フランス語",
+      es: "スペイン語",
+      de: "ドイツ語",
+      pt: "ポルトガル語",
+      ru: "ロシア語",
+      vi: "ベトナム語",
+      ar: "アラビア語",
     },
-    titleOrder: ["ja", "ko", "en"] as const,
+    titleOrder: ["ja", "ko", "en", "zh", "fr", "th", "id"] as const,
   },
 } as const;
 
@@ -222,22 +251,125 @@ function isUiLocale(value: string): value is UiLocale {
 }
 
 function getPrimaryTitle(work: WorkItem, locale: UiLocale) {
-  return work.title[locale] ?? work.title.ko;
+  const preferredOrder = [locale, "ko", "en", "ja", "zh", "fr", "th", "id"];
+
+  for (const key of preferredOrder) {
+    const title = work.title[key];
+    if (title) {
+      return title;
+    }
+  }
+
+  return Object.values(work.title)[0] ?? work.id;
 }
 
 function getSecondaryTitles(work: WorkItem, locale: UiLocale) {
-  return uiCopy[locale].titleOrder
-    .filter((item) => item !== locale)
-    .map((item) => work.title[item])
-    .join(" · ");
+  const primary = getPrimaryTitle(work, locale);
+  const orderedEntries = Object.entries(work.title)
+    .filter(([, title]) => Boolean(title))
+    .sort(([leftKey, leftTitle], [rightKey, rightTitle]) => {
+      const leftIndex = uiCopy[locale].titleOrder.indexOf(leftKey);
+      const rightIndex = uiCopy[locale].titleOrder.indexOf(rightKey);
+
+      if (leftIndex !== rightIndex) {
+        return (leftIndex === -1 ? Number.MAX_SAFE_INTEGER : leftIndex) -
+          (rightIndex === -1 ? Number.MAX_SAFE_INTEGER : rightIndex);
+      }
+
+      return leftTitle.localeCompare(rightTitle);
+    })
+    .map(([, title]) => title);
+
+  return Array.from(new Set(orderedEntries)).filter((title) => title !== primary).join(" · ");
 }
 
-function getCountryLabel(country: CountryId, locale: UiLocale) {
-  return uiCopy[locale].countryNames[country];
+function getCountryLabel(country: string, locale: UiLocale) {
+  return uiCopy[locale].countryNames[getCountryMeta(country).id as keyof CopyMap["countryNames"]] ?? getCountryMeta(country).name;
 }
 
-function getLocaleLabel(locale: WorkLink["language"], uiLocale: UiLocale) {
-  return uiCopy[uiLocale].localeNames[locale as keyof CopyMap["localeNames"]] ?? localeNames[locale];
+function getLocaleLabel(locale: string, uiLocale: UiLocale) {
+  return (
+    uiCopy[uiLocale].localeNames[locale as keyof CopyMap["localeNames"]] ??
+    getLanguageLabel(locale)
+  );
+}
+
+function collectCountryOptions(works: WorkItem[]): CountryOption[] {
+  const seen = new Map<string, CountryOption>();
+
+  for (const work of works) {
+    for (const link of work.links) {
+      const meta = getCountryMeta(link.country);
+      if (!seen.has(meta.id)) {
+        seen.set(meta.id, {
+          id: meta.id,
+          name: meta.name,
+          flag: meta.flag,
+        });
+      }
+    }
+  }
+
+  const priority = ["kr", "global", "jp", "us", "cn", "th", "id"];
+
+  return Array.from(seen.values()).sort((left, right) => {
+    const leftIndex = priority.indexOf(left.id);
+    const rightIndex = priority.indexOf(right.id);
+
+    if (leftIndex !== rightIndex) {
+      return (leftIndex === -1 ? Number.MAX_SAFE_INTEGER : leftIndex) -
+        (rightIndex === -1 ? Number.MAX_SAFE_INTEGER : rightIndex);
+    }
+
+    return left.name.localeCompare(right.name);
+  });
+}
+
+function collectPlatformOptions(works: WorkItem[]): PlatformOption[] {
+  const seen = new Map<string, PlatformOption>();
+
+  for (const work of works) {
+    for (const link of work.links) {
+      const meta = getPlatformMeta(link.platform);
+      if (!seen.has(meta.id)) {
+        seen.set(meta.id, {
+          id: meta.id,
+          name: meta.name,
+          icon: meta.icon,
+          tone: meta.tone,
+        });
+      }
+    }
+  }
+
+  return Array.from(seen.values()).sort((left, right) => left.name.localeCompare(right.name));
+}
+
+function isCountrySelected(workLink: WorkLink, selectedCountry: string) {
+  return selectedCountry === "all" || getCountryMeta(workLink.country).id === selectedCountry;
+}
+
+function isPlatformSelected(workLink: WorkLink, selectedPlatform: string) {
+  return selectedPlatform === "all" || getPlatformMeta(workLink.platform).id === selectedPlatform;
+}
+
+function buildSearchableText(work: WorkItem) {
+  return [
+    work.id,
+    ...Object.values(work.title),
+    ...work.aliases,
+    ...work.links.flatMap((link) => [
+      link.country,
+      getCountryMeta(link.country).name,
+      ...getCountryMeta(link.country).aliases,
+      link.platform,
+      getPlatformMeta(link.platform).name,
+      ...getPlatformMeta(link.platform).aliases,
+      getLanguageLabel(link.language),
+    ]),
+  ]
+    .join(" ")
+    .toLowerCase();
 }
 
 function readStoredValue<T>(key: string, fallback: T): T {
@@ -251,11 +383,6 @@ function readStoredValue<T>(key: string, fallback: T): T {
   } catch {
     return fallback;
   }
-}
-
-function knownIdsOnly(ids: string[]) {
-  const knownIds = new Set(catalog.map((work) => work.id));
-  return ids.filter((id) => knownIds.has(id));
 }
 
 function normalize(value: string) {
@@ -286,8 +413,8 @@ function IconButton({
   );
 }
 
-function PlatformBadge({ platformId }: { platformId: PlatformId }) {
-  const platform = platforms[platformId];
+function PlatformBadge({ platformId }: { platformId: string }) {
+  const platform = getPlatformMeta(platformId);
 
   return (
     <span className={`platform-badge platform-${platform.tone}`}>
@@ -309,8 +436,8 @@ function LinkRow({
   onCopy: (value: string, key: string) => void;
   uiLocale: UiLocale;
 }) {
-  const platform = platforms[link.platform];
-  const country = countries[link.country];
+  const platform = getPlatformMeta(link.platform);
+  const country = getCountryMeta(link.country);
 
   return (
     <div className="link-row">
@@ -377,28 +504,25 @@ function LinkGroup({
 }
 
 export default function Home() {
+  const [catalogData, setCatalogData] = useState<WorkItem[]>(catalog);
   const [query, setQuery] = useState("");
-  const [country, setCountry] = useState<FilterValue<CountryId>>("all");
+  const [country, setCountry] = useState<FilterValue<string>>("all");
   const [uiLocale, setUiLocale] = useState<UiLocale>(() => {
     const stored = readStoredValue<string>(storageKeys.locale, "ko");
     return isUiLocale(stored) ? stored : "ko";
   });
-  const [platform, setPlatform] = useState<FilterValue<PlatformId>>("all");
+  const [platform, setPlatform] = useState<FilterValue<string>>("all");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [menuOpen, setMenuOpen] = useState(false);
   const [onlyFavorites, setOnlyFavorites] = useState(false);
-  const [favorites, setFavorites] = useState<string[]>(() =>
-    knownIdsOnly(readStoredValue<string[]>(storageKeys.favorites, [])),
-  );
+  const [favorites, setFavorites] = useState<string[]>(() => readStoredValue<string[]>(storageKeys.favorites, []));
   const [selectedWorkId, setSelectedWorkId] = useState<string | null>(() => {
     if (typeof window === "undefined") {
       return null;
     }
 
     const params = new URLSearchParams(window.location.search);
-    const workId = params.get("work");
-
-    return workId && catalog.some((work) => work.id === workId) ? workId : null;
+    return params.get("work");
   });
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const copy = uiCopy[uiLocale];
@@ -413,6 +537,41 @@ export default function Home() {
   }, [uiLocale]);
 
   useEffect(() => {
+    let cancelled = false;
+
+    async function loadCatalog() {
+      try {
+        const response = await fetch("/api/catalog", {
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to load catalog: ${response.status}`);
+        }
+
+        const data = (await response.json()) as { catalog?: WorkItem[] };
+        if (!cancelled && Array.isArray(data.catalog) && data.catalog.length > 0) {
+          setCatalogData(data.catalog);
+        }
+      } catch {
+        if (!cancelled) {
+          setCatalogData(catalog);
+        }
+      }
+    }
+
+    void loadCatalog();
+    const timer = window.setInterval(() => {
+      void loadCatalog();
+    }, 5 * 60 * 1000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, []);
+
+  useEffect(() => {
     const url = new URL(window.location.href);
     if (selectedWorkId) {
       url.searchParams.set("work", selectedWorkId);
@@ -423,52 +582,27 @@ export default function Home() {
     window.history.replaceState({}, "", url);
   }, [selectedWorkId]);
 
+  const countryOptions = useMemo(() => collectCountryOptions(catalogData), [catalogData]);
+  const platformOptions = useMemo(() => collectPlatformOptions(catalogData), [catalogData]);
+
   const filteredWorks = useMemo(() => {
     const normalizedQuery = normalize(query);
 
-    return catalog
+    return catalogData
       .filter((work) => !work.hidden)
       .filter((work) => !onlyFavorites || favorites.includes(work.id))
-      .filter((work) =>
-        work.links.some((link) => {
-          const countryMatch = country === "all" || link.country === country;
-          const platformMatch = platform === "all" || link.platform === platform;
-          return countryMatch && platformMatch;
-        }),
-      )
+      .filter((work) => work.links.some((link) => isCountrySelected(link, country) && isPlatformSelected(link, platform)))
       .filter((work) => {
         if (!normalizedQuery) {
           return true;
         }
 
-        const searchable = [
-          work.title.ko,
-          work.title.en,
-          work.title.ja,
-          ...work.aliases,
-          ...work.links.flatMap((link) => [
-            countries[link.country].name,
-            ...countries[link.country].aliases,
-            platforms[link.platform].name,
-            ...platforms[link.platform].aliases,
-            localeNames[link.language],
-          ]),
-        ]
-          .join(" ")
-          .toLowerCase();
-
-        return searchable.includes(normalizedQuery);
+        return buildSearchableText(work).includes(normalizedQuery);
       });
-  }, [
-    country,
-    favorites,
-    onlyFavorites,
-    platform,
-    query,
-  ]);
+  }, [catalogData, country, favorites, onlyFavorites, platform, query]);
 
   const selectedWork = selectedWorkId
-    ? catalog.find((work) => work.id === selectedWorkId) ?? null
+    ? catalogData.find((work) => work.id === selectedWorkId) ?? null
     : null;
 
   function toggleFavorite(workId: string) {
@@ -641,29 +775,25 @@ export default function Home() {
 
           <div className="filter-grid">
             <select
-              onChange={(event) =>
-                setCountry(event.target.value as FilterValue<CountryId>)
-              }
+              onChange={(event) => setCountry(event.target.value as FilterValue<string>)}
               value={country}
             >
               <option value="all">{copy.countryAll}</option>
               {countryOptions.map((item) => (
-                <option key={item} value={item}>
-                  {countries[item].flag} {getCountryLabel(item, uiLocale)}
+                <option key={item.id} value={item.id}>
+                  {item.flag} {item.name}
                 </option>
               ))}
             </select>
 
             <select
-              onChange={(event) =>
-                setPlatform(event.target.value as FilterValue<PlatformId>)
-              }
+              onChange={(event) => setPlatform(event.target.value as FilterValue<string>)}
               value={platform}
             >
               <option value="all">{copy.platformAll}</option>
               {platformOptions.map((item) => (
-                <option key={item} value={item}>
-                  {platforms[item].name}
+                <option key={item.id} value={item.id}>
+                  {item.name}
                 </option>
               ))}
             </select>
@@ -704,10 +834,7 @@ export default function Home() {
           <div className={viewMode === "grid" ? "work-grid" : "work-list"}>
             {filteredWorks.map((work) => {
               const visibleLinks = work.links.filter((link) => {
-                const countryMatch = country === "all" || link.country === country;
-                const platformMatch =
-                  platform === "all" || link.platform === platform;
-                return countryMatch && platformMatch;
+                return isCountrySelected(link, country) && isPlatformSelected(link, platform);
               });
               const domesticCount = visibleLinks.filter(
                 (link) => link.region === "domestic",
@@ -852,8 +979,8 @@ function WorkCard({
           <p className="work-count">{copy.cardCount(domesticCount, overseasCount, work.links.length)}</p>
           <div className="work-chip-row">
             {visibleLinks.slice(0, 4).map((link) => {
-              const country = countries[link.country];
-              const platform = platforms[link.platform];
+              const country = getCountryMeta(link.country);
+              const platform = getPlatformMeta(link.platform);
 
               return (
                 <span className="work-chip" key={link.id}>
