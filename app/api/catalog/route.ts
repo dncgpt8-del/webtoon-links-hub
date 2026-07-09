@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { catalog as fallbackCatalog, defaultCatalogCsvUrl, parseCatalogCsv } from "../../catalog-data";
 
+export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const response = await fetch(defaultCatalogCsvUrl, {
+    const catalogCsvUrl = process.env.GOOGLE_SHEET_CSV_URL ?? defaultCatalogCsvUrl;
+    const response = await fetch(catalogCsvUrl, {
       cache: "no-store",
     });
 

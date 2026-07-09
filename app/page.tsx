@@ -244,7 +244,7 @@ const uiCopy = {
   },
 } as const;
 
-type CopyMap = (typeof uiCopy)["ko"];
+type CopyMap = (typeof uiCopy)[UiLocale];
 
 function isUiLocale(value: string): value is UiLocale {
   return uiLocaleOptions.includes(value as UiLocale);
@@ -265,11 +265,12 @@ function getPrimaryTitle(work: WorkItem, locale: UiLocale) {
 
 function getSecondaryTitles(work: WorkItem, locale: UiLocale) {
   const primary = getPrimaryTitle(work, locale);
+  const orderedLocales = uiCopy[locale].titleOrder as readonly string[];
   const orderedEntries = Object.entries(work.title)
     .filter(([, title]) => Boolean(title))
     .sort(([leftKey, leftTitle], [rightKey, rightTitle]) => {
-      const leftIndex = uiCopy[locale].titleOrder.indexOf(leftKey);
-      const rightIndex = uiCopy[locale].titleOrder.indexOf(rightKey);
+      const leftIndex = orderedLocales.indexOf(leftKey);
+      const rightIndex = orderedLocales.indexOf(rightKey);
 
       if (leftIndex !== rightIndex) {
         return (leftIndex === -1 ? Number.MAX_SAFE_INTEGER : leftIndex) -

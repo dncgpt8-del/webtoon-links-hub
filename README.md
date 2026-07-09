@@ -1,8 +1,7 @@
-# vinext-starter
+# webtoon-links-hub
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+A Next.js catalog for official webtoon release links, ready for Cloudflare Pages
+deployment with Google Sheets data.
 
 ## Prerequisites
 
@@ -16,16 +15,16 @@ npm run dev
 npm run build
 ```
 
-This starter does not use `wrangler.jsonc`.
+This project now uses standard Next.js scripts so it can be connected directly
+to Cloudflare Pages from GitHub.
 
 ## Included Shape
 
 - edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
+- Google Sheets data is read through `/api/catalog`
+- `GOOGLE_SHEET_CSV_URL` can override the published CSV address
+- `vite.config.ts` and `worker/index.ts` are legacy OpenAI Sites files and are
+  not used for Cloudflare Pages deployment
 
 ## Workspace Auth Headers
 
@@ -88,8 +87,17 @@ actions tied to the current ChatGPT user. Leave public content anonymous.
 ## Useful Commands
 
 - `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
+- `npm run build`: verify the Next.js build output
 - `npm run db:generate`: generate Drizzle migrations after schema changes
+
+## Cloudflare Pages
+
+1. Push this repository to GitHub.
+2. Connect the GitHub repo to Cloudflare Pages.
+3. Set the build command to `npm run build`.
+4. Add `GOOGLE_SHEET_CSV_URL` as an environment variable if you want to change
+   the published sheet URL without editing code.
+5. Use the published Pages domain such as `https://xxxxx.pages.dev`.
 
 ## Learn More
 
