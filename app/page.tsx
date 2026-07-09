@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
   catalog,
@@ -27,7 +27,6 @@ type PlatformOption = {
 };
 
 const storageKeys = {
-  favorites: "webtoonLinks:favorites",
   locale: "webtoonLinks:locale",
 };
 
@@ -40,7 +39,6 @@ const uiCopy = {
     navWorks: "전체 작품",
     navCountry: "국가",
     navPlatform: "플랫폼",
-    favorites: "즐겨찾기",
     viewGrid: "카드 보기",
     viewList: "리스트 보기",
     heroPrefix: "전 세계 모든",
@@ -58,19 +56,16 @@ const uiCopy = {
       ja: "日本語",
     },
     worksTitle: "전체 작품",
-    favoritesTitle: "즐겨찾기",
     resultCount: (works: number, links: number) => `${works} 작품 · ${links} 링크`,
     cardCount: (domestic: number, overseas: number, total: number) =>
       `국내 ${domestic} · 해외 ${overseas} · 전체 ${total}`,
-    cardFavorite: "즐겨찾기",
     emptyState: "조건에 맞는 작품이 없습니다.",
-    footerNote: "즐겨찾기는 브라우저에 저장되고, 작품 데이터는 구글 시트에서 자동 반영됩니다.",
+    footerNote: "작품 데이터는 구글 시트에서 자동 반영됩니다.",
     detailHome: "홈",
     detailList: "작품 목록",
     detailOfficial: "정식 연재처",
     detailLinkCount: (count: number) => `${count}개 정식 링크`,
-    detailMetaSuffix: "즐겨찾기와 링크 복사 지원",
-    detailFavorite: "즐겨찾기",
+    detailMetaSuffix: "링크 복사 지원",
     detailShare: "공유하기",
     detailShared: "복사됨",
     detailDomestic: "국내",
@@ -109,7 +104,6 @@ const uiCopy = {
     navWorks: "All Works",
     navCountry: "Country",
     navPlatform: "Platform",
-    favorites: "Favorites",
     viewGrid: "Card view",
     viewList: "List view",
     heroPrefix: "All",
@@ -127,19 +121,16 @@ const uiCopy = {
       ja: "Japanese",
     },
     worksTitle: "All works",
-    favoritesTitle: "Favorites",
     resultCount: (works: number, links: number) => `${works} works · ${links} links`,
     cardCount: (domestic: number, overseas: number, total: number) =>
       `Domestic ${domestic} · Overseas ${overseas} · Total ${total}`,
-    cardFavorite: "Favorite",
     emptyState: "No works match the current filters.",
-    footerNote: "Favorites stay in your browser, and work data refreshes from Google Sheets.",
+    footerNote: "Work data refreshes from Google Sheets.",
     detailHome: "Home",
     detailList: "Work list",
     detailOfficial: "Official release sites",
     detailLinkCount: (count: number) => `${count} official links`,
-    detailMetaSuffix: "Favorites and link copy supported",
-    detailFavorite: "Favorite",
+    detailMetaSuffix: "Link copy supported",
     detailShare: "Share",
     detailShared: "Copied",
     detailDomestic: "Domestic",
@@ -178,7 +169,6 @@ const uiCopy = {
     navWorks: "全作品",
     navCountry: "国",
     navPlatform: "プラットフォーム",
-    favorites: "お気に入り",
     viewGrid: "カード表示",
     viewList: "リスト表示",
     heroPrefix: "世界中の",
@@ -196,19 +186,16 @@ const uiCopy = {
       ja: "日本語",
     },
     worksTitle: "全作品",
-    favoritesTitle: "お気に入り",
     resultCount: (works: number, links: number) => `${works}作品 · ${links}リンク`,
     cardCount: (domestic: number, overseas: number, total: number) =>
       `国内 ${domestic} · 海外 ${overseas} · 合計 ${total}`,
-    cardFavorite: "お気に入り",
     emptyState: "条件に合う作品がありません。",
-    footerNote: "お気に入りはブラウザに保存され、作品データはGoogleスプレッドシートから反映されます。",
+    footerNote: "作品データはGoogleスプレッドシートから反映されます。",
     detailHome: "ホーム",
     detailList: "作品一覧",
     detailOfficial: "公式連載先",
     detailLinkCount: (count: number) => `${count}件の公式リンク`,
-    detailMetaSuffix: "お気に入りとリンクコピーに対応",
-    detailFavorite: "お気に入り",
+    detailMetaSuffix: "リンクコピーに対応",
     detailShare: "共有",
     detailShared: "コピー済み",
     detailDomestic: "国内",
@@ -515,8 +502,6 @@ export default function Home() {
   const [platform, setPlatform] = useState<FilterValue<string>>("all");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [onlyFavorites, setOnlyFavorites] = useState(false);
-  const [favorites, setFavorites] = useState<string[]>(() => readStoredValue<string[]>(storageKeys.favorites, []));
   const [selectedWorkId, setSelectedWorkId] = useState<string | null>(() => {
     if (typeof window === "undefined") {
       return null;
@@ -527,15 +512,41 @@ export default function Home() {
   });
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const copy = uiCopy[uiLocale];
-
-  useEffect(() => {
-    window.localStorage.setItem(storageKeys.favorites, JSON.stringify(favorites));
-  }, [favorites]);
+  const seededDetailHistoryRef = useRef(false);
 
   useEffect(() => {
     window.localStorage.setItem(storageKeys.locale, uiLocale);
     document.documentElement.lang = uiLocale;
   }, [uiLocale]);
+
+  useEffect(() => {
+    function handlePopState() {
+      const params = new URLSearchParams(window.location.search);
+      setSelectedWorkId(params.get("work"));
+    }
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  useEffect(() => {
+    if (seededDetailHistoryRef.current) {
+      return;
+    }
+
+    seededDetailHistoryRef.current = true;
+    if (!selectedWorkId) {
+      return;
+    }
+
+    const detailUrl = new URL(window.location.href);
+    const homeUrl = new URL(window.location.href);
+    homeUrl.searchParams.delete("work");
+
+    window.history.replaceState({ webtoonLinks: "detail", work: selectedWorkId }, "", detailUrl);
+    window.history.pushState({ webtoonLinks: "home" }, "", homeUrl);
+    window.history.pushState({ webtoonLinks: "detail", work: selectedWorkId }, "", detailUrl);
+  }, [selectedWorkId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -572,17 +583,6 @@ export default function Home() {
     };
   }, []);
 
-  useEffect(() => {
-    const url = new URL(window.location.href);
-    if (selectedWorkId) {
-      url.searchParams.set("work", selectedWorkId);
-    } else {
-      url.searchParams.delete("work");
-    }
-
-    window.history.replaceState({}, "", url);
-  }, [selectedWorkId]);
-
   const countryOptions = useMemo(() => collectCountryOptions(catalogData), [catalogData]);
   const platformOptions = useMemo(() => collectPlatformOptions(catalogData), [catalogData]);
 
@@ -591,7 +591,6 @@ export default function Home() {
 
     return catalogData
       .filter((work) => !work.hidden)
-      .filter((work) => !onlyFavorites || favorites.includes(work.id))
       .filter((work) => work.links.some((link) => isCountrySelected(link, country) && isPlatformSelected(link, platform)))
       .filter((work) => {
         if (!normalizedQuery) {
@@ -600,25 +599,16 @@ export default function Home() {
 
         return buildSearchableText(work).includes(normalizedQuery);
       });
-  }, [catalogData, country, favorites, onlyFavorites, platform, query]);
+  }, [catalogData, country, platform, query]);
 
   const selectedWork = selectedWorkId
     ? catalogData.find((work) => work.id === selectedWorkId) ?? null
     : null;
 
-  function toggleFavorite(workId: string) {
-    setFavorites((current) =>
-      current.includes(workId)
-        ? current.filter((id) => id !== workId)
-        : [...current, workId],
-    );
-  }
-
   function resetFilters() {
     setQuery("");
     setCountry("all");
     setPlatform("all");
-    setOnlyFavorites(false);
   }
 
   function cycleLocale() {
@@ -626,6 +616,40 @@ export default function Home() {
       const currentIndex = uiLocaleOptions.indexOf(current);
       return uiLocaleOptions[(currentIndex + 1) % uiLocaleOptions.length];
     });
+  }
+
+  function syncSelectedWork(workId: string | null, method: "pushState" | "replaceState") {
+    setSelectedWorkId(workId);
+
+    const url = new URL(window.location.href);
+    if (workId) {
+      url.searchParams.set("work", workId);
+    } else {
+      url.searchParams.delete("work");
+    }
+
+    if (method === "pushState") {
+      window.history.pushState({ work: workId }, "", url);
+    } else {
+      window.history.replaceState({ work: workId }, "", url);
+    }
+  }
+
+  function openWork(workId: string) {
+    if (selectedWorkId === workId) {
+      return;
+    }
+
+    syncSelectedWork(workId, "pushState");
+  }
+
+  function closeWork() {
+    if (window.history.state?.work) {
+      window.history.back();
+      return;
+    }
+
+    syncSelectedWork(null, "replaceState");
   }
 
   async function copyText(value: string, key: string) {
@@ -660,31 +684,25 @@ export default function Home() {
     const overseasLinks = selectedWork.links.filter(
       (link) => link.region === "overseas",
     );
-    const favorite = favorites.includes(selectedWork.id);
 
     return (
       <main className="site-shell detail-shell">
         <Header
-          favoritesActive={onlyFavorites}
           copy={copy}
           menuOpen={menuOpen}
           onLocale={cycleLocale}
-          onFavorites={() => {
-            setOnlyFavorites((value) => !value);
-            setSelectedWorkId(null);
-          }}
-          onHome={() => setSelectedWorkId(null)}
+          onHome={closeWork}
           onMenu={() => setMenuOpen((value) => !value)}
           uiLocale={uiLocale}
         />
 
         <section className="detail-page">
           <div className="breadcrumb">
-            <button onClick={() => setSelectedWorkId(null)} type="button">
+            <button onClick={closeWork} type="button">
               {copy.detailHome}
             </button>
             <span>›</span>
-            <button onClick={() => setSelectedWorkId(null)} type="button">
+            <button onClick={closeWork} type="button">
               {copy.detailList}
             </button>
             <span>›</span>
@@ -699,13 +717,6 @@ export default function Home() {
                 {copy.detailLinkCount(selectedWork.links.length)} · {copy.detailMetaSuffix}
               </p>
               <div className="detail-actions">
-                <button
-                  className={favorite ? "primary-action active" : "primary-action"}
-                  onClick={() => toggleFavorite(selectedWork.id)}
-                  type="button"
-                >
-                  ★ {copy.detailFavorite}
-                </button>
                 <button
                   className="secondary-action"
                   onClick={() => copyWorkLink(selectedWork.id)}
@@ -746,11 +757,9 @@ export default function Home() {
   return (
     <main className="site-shell">
       <Header
-        favoritesActive={onlyFavorites}
         copy={copy}
         menuOpen={menuOpen}
         onLocale={cycleLocale}
-        onFavorites={() => setOnlyFavorites((value) => !value)}
         onHome={() => resetFilters()}
         onMenu={() => setMenuOpen((value) => !value)}
         uiLocale={uiLocale}
@@ -809,7 +818,7 @@ export default function Home() {
       <section className="content-layout">
         <div className="works-column">
           <div className="section-toolbar">
-            <h2>{onlyFavorites ? copy.favoritesTitle : copy.worksTitle}</h2>
+            <h2>{copy.worksTitle}</h2>
             <div className="toolbar-actions">
               <IconButton
                 active={viewMode === "grid"}
@@ -844,10 +853,8 @@ export default function Home() {
 
               return (
                 <WorkCard
-                  favorite={favorites.includes(work.id)}
                   key={work.id}
-                  onFavorite={toggleFavorite}
-                  onSelect={setSelectedWorkId}
+                  onSelect={openWork}
                   viewMode={viewMode}
                   copy={copy}
                   uiLocale={uiLocale}
@@ -869,36 +876,20 @@ export default function Home() {
         <strong>🌐 WEBTOON LINKS</strong>
         <div>{copy.footerNote}</div>
       </footer>
-
-      <nav className="bottom-nav">
-        <button onClick={resetFilters} type="button">
-          ⌂<span>{copy.detailHome}</span>
-        </button>
-        <button onClick={() => setOnlyFavorites(false)} type="button">
-          ▤<span>{copy.navWorks}</span>
-        </button>
-        <button onClick={() => setOnlyFavorites(true)} type="button">
-          ☆<span>{copy.favorites}</span>
-        </button>
-      </nav>
     </main>
   );
 }
 
 function Header({
-  favoritesActive,
   copy,
   menuOpen,
-  onFavorites,
   onHome,
   onMenu,
   onLocale,
   uiLocale,
 }: {
-  favoritesActive: boolean;
   copy: CopyMap;
   menuOpen: boolean;
-  onFavorites: () => void;
   onHome: () => void;
   onMenu: () => void;
   onLocale: () => void;
@@ -920,13 +911,6 @@ function Header({
       </nav>
       <div className="topbar-actions">
         <button
-          className={`favorite-link ${favoritesActive ? "active" : ""}`}
-          onClick={onFavorites}
-          type="button"
-        >
-          ★ {copy.favorites}
-        </button>
-        <button
           aria-label={copy.localeLabel}
           className="locale-link"
           onClick={onLocale}
@@ -944,9 +928,7 @@ function Header({
 }
 
 function WorkCard({
-  favorite,
   copy,
-  onFavorite,
   onSelect,
   viewMode,
   uiLocale,
@@ -955,9 +937,7 @@ function WorkCard({
   domesticCount,
   overseasCount,
 }: {
-  favorite: boolean;
   copy: CopyMap;
-  onFavorite: (workId: string) => void;
   onSelect: (workId: string) => void;
   viewMode: ViewMode;
   uiLocale: UiLocale;
@@ -994,15 +974,6 @@ function WorkCard({
             })}
           </div>
         </div>
-      </button>
-
-      <button
-        className={`heart-button ${favorite ? "active" : ""}`}
-        onClick={() => onFavorite(work.id)}
-        title={copy.cardFavorite}
-        type="button"
-      >
-        ♡
       </button>
     </article>
   );
