@@ -97,6 +97,20 @@ export const countries: Record<string, CountryMeta> = {
     flag: "🇮🇩",
     aliases: ["인도네시아", "indonesia", "id"],
   },
+  tw: {
+    id: "tw",
+    code: "TW",
+    name: "대만",
+    flag: "🇹🇼",
+    aliases: ["대만", "타이완", "taiwan", "taipei", "tw", "台湾", "臺灣"],
+  },
+  br: {
+    id: "br",
+    code: "BR",
+    name: "브라질",
+    flag: "🇧🇷",
+    aliases: ["브라질", "brazil", "br", "brasil"],
+  },
   global: {
     id: "global",
     code: "EN",
