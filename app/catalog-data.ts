@@ -109,7 +109,7 @@ export const countries: Record<string, CountryMeta> = {
     code: "BR",
     name: "브라질",
     flag: "🇧🇷",
-    aliases: ["브라질", "brazil", "br", "brasil"],
+    aliases: ["브라질", "brazil", "br", "brasil", "포르투갈어/브라질", "포르투갈-브라질", "pt-br", "brazilian portuguese"],
   },
   global: {
     id: "global",
@@ -138,13 +138,6 @@ export const countries: Record<string, CountryMeta> = {
     name: "포르투갈",
     flag: "🇵🇹",
     aliases: ["포르투갈", "portugal", "pt"],
-  },
-  "pt-br": {
-    id: "pt-br",
-    code: "PT-BR",
-    name: "포르투갈-브라질",
-    flag: "🇧🇷",
-    aliases: ["포르투갈-브라질", "포르투갈어/브라질", "pt-br", "brazilian portuguese"],
   },
   es: {
     id: "es",

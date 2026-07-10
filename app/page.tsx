@@ -81,7 +81,6 @@ const uiCopy = {
       fr: "프랑스",
       de: "독일",
       pt: "포르투갈",
-      "pt-br": "포르투갈-브라질",
       es: "스페인",
       ru: "러시아",
       vi: "베트남",
@@ -149,7 +148,6 @@ const uiCopy = {
       fr: "France",
       de: "Germany",
       pt: "Portugal",
-      "pt-br": "Portugal-Brazil",
       es: "Spain",
       ru: "Russia",
       vi: "Vietnam",
@@ -217,7 +215,6 @@ const uiCopy = {
       fr: "フランス",
       de: "ドイツ",
       pt: "ポルトガル",
-      "pt-br": "ポルトガル-ブラジル",
       es: "スペイン",
       ru: "ロシア",
       vi: "ベトナム",
@@ -306,7 +303,7 @@ function collectCountryOptions(works: WorkItem[]): CountryOption[] {
     }
   }
 
-  const priority = ["kr", "global", "jp", "us", "cn", "th", "id", "tw", "br", "fr", "de", "pt", "pt-br", "es", "ru", "vi", "ar"];
+  const priority = ["kr", "global", "jp", "us", "cn", "th", "id", "tw", "br", "fr", "de", "pt", "es", "ru", "vi", "ar"];
 
   return Array.from(seen.values()).sort((left, right) => {
     const leftIndex = priority.indexOf(left.id);
