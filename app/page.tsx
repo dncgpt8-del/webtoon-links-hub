@@ -403,7 +403,6 @@ function LinkRow({
   uiLocale: UiLocale;
 }) {
   const platform = getPlatformMeta(link.platform);
-  const country = getCountryMeta(link.country);
 
   return (
     <div className="link-row">
@@ -411,9 +410,7 @@ function LinkRow({
         <PlatformBadge platformId={link.platform} />
         <span>{platform.name}</span>
       </div>
-      <div>
-        {country.flag} {getCountryLabel(link.country, uiLocale)}
-      </div>
+      <div>{getCountryLabel(link.country, uiLocale)}</div>
       <div>{getLocaleLabel(link.language, uiLocale)}</div>
       <div className="link-actions">
         <a href={link.url} rel="noreferrer" target="_blank">
@@ -749,7 +746,7 @@ export default function Home() {
               <option value="all">{copy.countryAll}</option>
               {countryOptions.map((item) => (
                 <option key={item.id} value={item.id}>
-                  {item.flag} {item.name}
+                  {getCountryLabel(item.id, uiLocale)}
                 </option>
               ))}
             </select>
@@ -869,7 +866,7 @@ function Header({
           title={copy.localeLabel}
           type="button"
         >
-          🌐 {copy.localeOptions[uiLocale]}
+          {copy.localeOptions[uiLocale]}
         </button>
       </div>
     </header>
@@ -916,7 +913,7 @@ function WorkCard({
                 <span className="work-chip" key={link.id}>
                   <PlatformBadge platformId={link.platform} />
                   <span>
-                    {country.flag} {platform.name}
+                    {getCountryLabel(link.country, uiLocale)} · {platform.name}
                   </span>
                 </span>
               );
