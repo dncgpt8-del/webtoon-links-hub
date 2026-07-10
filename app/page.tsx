@@ -263,6 +263,11 @@ function getCountryCode(country: string) {
   return meta.code;
 }
 
+function getCountryName(country: string, locale: UiLocale) {
+  const meta = getCountryMeta(country);
+  return uiCopy[locale].countryNames[meta.id as keyof CopyMap["countryNames"]] ?? meta.name;
+}
+
 function getSecondaryTitles(work: WorkItem, locale: UiLocale) {
   const primary = getPrimaryTitle(work, locale);
   // Keep card subtitles compact: only show the two requested foreign titles.
@@ -275,9 +280,7 @@ function getSecondaryTitles(work: WorkItem, locale: UiLocale) {
 }
 
 function getCountryLabel(country: string, locale: UiLocale) {
-  const meta = getCountryMeta(country);
-  const localizedName = uiCopy[locale].countryNames[meta.id as keyof CopyMap["countryNames"]] ?? meta.name;
-  return `${getCountryCode(country)} ${localizedName}`;
+  return `${getCountryCode(country)} ${getCountryName(country, locale)}`;
 }
 
 function getLocaleLabel(locale: string, uiLocale: UiLocale) {
@@ -336,6 +339,59 @@ function collectPlatformOptions(works: WorkItem[]): PlatformOption[] {
   }
 
   return Array.from(seen.values()).sort((left, right) => left.name.localeCompare(right.name));
+}
+
+function compactText(value: string) {
+  return normalize(value).replace(/\s+/g, "");
+}
+
+function matchesAnyPlatformLabel(link: WorkLink, labels: string[]) {
+  const platform = getPlatformMeta(link.platform);
+  const candidates = [link.platform, platform.name, ...platform.aliases];
+  const normalizedCandidates = candidates.map(compactText);
+
+  return labels.some((label) => normalizedCandidates.includes(compactText(label)));
+}
+
+function getCardLinkPriority(link: WorkLink) {
+  const countryId = getCountryMeta(link.country).id;
+
+  if (matchesAnyPlatformLabel(link, ["카카오페이지"])) {
+    return 0;
+  }
+
+  if (matchesAnyPlatformLabel(link, ["카카오웹툰"])) {
+    return 1;
+  }
+
+  if (matchesAnyPlatformLabel(link, ["네이버웹툰"])) {
+    return 2;
+  }
+
+  if (matchesAnyPlatformLabel(link, ["네이버 시리즈", "네이버시리즈"])) {
+    return 3;
+  }
+
+  if (countryId === "kr") {
+    return 4;
+  }
+
+  if (link.language === "en") {
+    return 5;
+  }
+
+  return 6;
+}
+
+function sortCardLinks(links: WorkLink[]) {
+  return links
+    .map((link, index) => ({
+      link,
+      index,
+      priority: getCardLinkPriority(link),
+    }))
+    .sort((left, right) => left.priority - right.priority || left.index - right.index)
+    .map((item) => item.link);
 }
 
 function isCountrySelected(workLink: WorkLink, selectedCountry: string) {
@@ -438,8 +494,7 @@ function LinkRow({
         <PlatformBadge platformId={link.platform} />
         <span>{platform.name}</span>
       </div>
-      <div>{getCountryLabel(link.country, uiLocale)}</div>
-      <div>{getLocaleLabel(link.language, uiLocale)}</div>
+      <div>{getCountryName(link.country, uiLocale)}</div>
       <div className="link-actions">
         <a href={link.url} rel="noreferrer" target="_blank">
           {copy.detailOpen}
@@ -930,10 +985,10 @@ function WorkCard({
           </div>
         </div>
 
-        <div className="work-body">
+          <div className="work-body">
           <p className="work-count">{copy.cardCount(domesticCount, overseasCount, work.links.length)}</p>
           <div className="work-chip-row">
-            {visibleLinks.slice(0, 4).map((link) => {
+            {sortCardLinks(visibleLinks).slice(0, 4).map((link) => {
               const country = getCountryMeta(link.country);
               const platform = getPlatformMeta(link.platform);
 

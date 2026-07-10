@@ -592,7 +592,7 @@ a {
 
 .link-row {
   display: grid;
-  grid-template-columns: minmax(180px, 1.5fr) 100px 90px 140px;
+  grid-template-columns: minmax(180px, 1.7fr) minmax(90px, 0.9fr) 140px;
   align-items: center;
   min-height: 48px;
   gap: 12px;
