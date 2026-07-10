@@ -231,8 +231,14 @@ function getPrimaryTitle(work: WorkItem, locale: UiLocale) {
   return Object.values(work.title)[0] ?? work.id;
 }
 
+function getCountryCode(country: string) {
+  const meta = getCountryMeta(country);
+  return meta.id === "global" ? "EN" : meta.id.toUpperCase();
+}
+
 function getSecondaryTitles(work: WorkItem, locale: UiLocale) {
   const primary = getPrimaryTitle(work, locale);
+  // Keep card subtitles compact: only show the two requested foreign titles.
   const secondaryTitles = [work.title.en, work.title.ja]
     .filter((title): title is string => Boolean(title))
     .filter((title, index, titles) => titles.indexOf(title) === index)
@@ -242,7 +248,9 @@ function getSecondaryTitles(work: WorkItem, locale: UiLocale) {
 }
 
 function getCountryLabel(country: string, locale: UiLocale) {
-  return uiCopy[locale].countryNames[getCountryMeta(country).id as keyof CopyMap["countryNames"]] ?? getCountryMeta(country).name;
+  const meta = getCountryMeta(country);
+  const localizedName = uiCopy[locale].countryNames[meta.id as keyof CopyMap["countryNames"]] ?? meta.name;
+  return `${getCountryCode(country)} ${localizedName}`;
 }
 
 function getLocaleLabel(locale: string, uiLocale: UiLocale) {
