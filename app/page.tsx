@@ -76,6 +76,14 @@ const uiCopy = {
       th: "태국",
       id: "인도네시아",
       global: "글로벌",
+      fr: "프랑스",
+      de: "독일",
+      pt: "포르투갈",
+      "pt-br": "포르투갈-브라질",
+      es: "스페인",
+      ru: "러시아",
+      vi: "베트남",
+      ar: "아랍",
     },
     localeNames: {
       ko: "한국어",
@@ -134,6 +142,14 @@ const uiCopy = {
       th: "Thailand",
       id: "Indonesia",
       global: "Global",
+      fr: "France",
+      de: "Germany",
+      pt: "Portugal",
+      "pt-br": "Portugal-Brazil",
+      es: "Spain",
+      ru: "Russia",
+      vi: "Vietnam",
+      ar: "Arab",
     },
     localeNames: {
       ko: "Korean",
@@ -192,6 +208,14 @@ const uiCopy = {
       th: "タイ",
       id: "インドネシア",
       global: "グローバル",
+      fr: "フランス",
+      de: "ドイツ",
+      pt: "ポルトガル",
+      "pt-br": "ポルトガル-ブラジル",
+      es: "スペイン",
+      ru: "ロシア",
+      vi: "ベトナム",
+      ar: "アラブ",
     },
     localeNames: {
       ko: "韓国語",
@@ -233,7 +257,7 @@ function getPrimaryTitle(work: WorkItem, locale: UiLocale) {
 
 function getCountryCode(country: string) {
   const meta = getCountryMeta(country);
-  return meta.id === "global" ? "EN" : meta.id.toUpperCase();
+  return meta.code;
 }
 
 function getSecondaryTitles(work: WorkItem, locale: UiLocale) {
@@ -276,7 +300,7 @@ function collectCountryOptions(works: WorkItem[]): CountryOption[] {
     }
   }
 
-  const priority = ["kr", "global", "jp", "us", "cn", "th", "id"];
+  const priority = ["kr", "global", "jp", "us", "cn", "th", "id", "fr", "de", "pt", "pt-br", "es", "ru", "vi", "ar"];
 
   return Array.from(seen.values()).sort((left, right) => {
     const leftIndex = priority.indexOf(left.id);
@@ -327,6 +351,7 @@ function buildSearchableText(work: WorkItem) {
     ...work.links.flatMap((link) => [
       link.country,
       getCountryMeta(link.country).name,
+      getCountryMeta(link.country).code,
       ...getCountryMeta(link.country).aliases,
       link.platform,
       getPlatformMeta(link.platform).name,

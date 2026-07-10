@@ -24,6 +24,7 @@ export type WorkItem = {
 
 export type CountryMeta = {
   id: string;
+  code: string;
   name: string;
   flag: string;
   aliases: string[];
@@ -56,45 +57,108 @@ export const localeNames: Record<string, string> = {
 export const countries: Record<string, CountryMeta> = {
   kr: {
     id: "kr",
+    code: "KR",
     name: "국내",
     flag: "🇰🇷",
     aliases: ["국내", "한국", "대한민국", "korea", "south korea", "kr"],
   },
   jp: {
     id: "jp",
+    code: "JP",
     name: "일본",
     flag: "🇯🇵",
     aliases: ["일본", "japan", "nihon", "jp"],
   },
   us: {
     id: "us",
+    code: "US",
     name: "북미",
     flag: "🇺🇸",
     aliases: ["북미", "미국", "usa", "united states", "america", "us"],
   },
   cn: {
     id: "cn",
+    code: "CN",
     name: "중국",
     flag: "🇨🇳",
     aliases: ["중국", "china", "cn", "bilibili"],
   },
   th: {
     id: "th",
+    code: "TH",
     name: "태국",
     flag: "🇹🇭",
     aliases: ["태국", "thailand", "thai", "th"],
   },
   id: {
     id: "id",
+    code: "ID",
     name: "인도네시아",
     flag: "🇮🇩",
     aliases: ["인도네시아", "indonesia", "id"],
   },
   global: {
     id: "global",
+    code: "EN",
     name: "글로벌",
     flag: "🌍",
     aliases: ["글로벌", "global", "worldwide"],
+  },
+  fr: {
+    id: "fr",
+    code: "FR",
+    name: "프랑스",
+    flag: "🇫🇷",
+    aliases: ["프랑스", "france", "french", "fr"],
+  },
+  de: {
+    id: "de",
+    code: "DE",
+    name: "독일",
+    flag: "🇩🇪",
+    aliases: ["독일", "germany", "deutschland", "de"],
+  },
+  pt: {
+    id: "pt",
+    code: "PT",
+    name: "포르투갈",
+    flag: "🇵🇹",
+    aliases: ["포르투갈", "portugal", "pt"],
+  },
+  "pt-br": {
+    id: "pt-br",
+    code: "PT-BR",
+    name: "포르투갈-브라질",
+    flag: "🇧🇷",
+    aliases: ["포르투갈-브라질", "포르투갈어/브라질", "pt-br", "brazilian portuguese"],
+  },
+  es: {
+    id: "es",
+    code: "ES",
+    name: "스페인",
+    flag: "🇪🇸",
+    aliases: ["스페인", "spain", "es"],
+  },
+  ru: {
+    id: "ru",
+    code: "RU",
+    name: "러시아",
+    flag: "🇷🇺",
+    aliases: ["러시아", "russia", "ru"],
+  },
+  vi: {
+    id: "vi",
+    code: "VN",
+    name: "베트남",
+    flag: "🇻🇳",
+    aliases: ["베트남", "vietnam", "vi", "vn"],
+  },
+  ar: {
+    id: "ar",
+    code: "AR",
+    name: "아랍",
+    flag: "🌙",
+    aliases: ["아랍", "아랍어", "arab", "ar"],
   },
 };
 
@@ -263,6 +327,7 @@ export function getCountryMeta(value: string): CountryMeta {
   const name = normalizeText(value) || "기타";
   return {
     id: slugifyId(name),
+    code: /^[a-z]{2}(?:-[a-z]{2})?$/i.test(name) ? name.toUpperCase() : "XX",
     name,
     flag: "🌐",
     aliases: [name],
