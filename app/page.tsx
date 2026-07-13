@@ -131,7 +131,7 @@ const uiCopy = {
     viewGrid: "Card view",
     viewList: "List view",
     heroTitle: "D&C Webtoon official site",
-    heroDescription: "Find official <span>🏠</span> across domestic and overseas platforms.",
+    heroDescription: "Find official webtoon links across domestic and overseas platforms.",
     searchPlaceholder: "Search by title or alias",
     countryAll: "All countries",
     platformAll: "All platforms",
