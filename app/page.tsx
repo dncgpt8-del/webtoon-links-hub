@@ -477,7 +477,9 @@ function IconButton({
 
 function PlatformBadge({ platformId }: { platformId: string }) {
   const platform = getPlatformMeta(platformId);
-  const logo = platformLogos[platform.name.replace(/\s+/g, "").toLowerCase()];
+  const normalizedPlatformName = platform.name.replace(/\s+/g, "").toLowerCase();
+  const logoKey = normalizedPlatformName === "교보문고" ? "교보" : normalizedPlatformName;
+  const logo = platformLogos[logoKey];
 
   return (
     <span className={`platform-badge platform-${platform.tone}`}>
@@ -1035,5 +1037,4 @@ function WorkCard({
     </article>
   );
 }
-
 
