@@ -280,7 +280,7 @@ function getSecondaryTitles(work: WorkItem, locale: UiLocale) {
 }
 
 function getCountryLabel(country: string, locale: UiLocale) {
-  return `${getCountryCode(country)} ${getCountryName(country, locale)}`;
+  return getCountryName(country, locale);
 }
 
 function getLocaleLabel(locale: string, uiLocale: UiLocale) {
