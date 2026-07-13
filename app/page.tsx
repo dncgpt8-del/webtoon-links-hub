@@ -353,10 +353,14 @@ function collectCountryOptions(works: WorkItem[]): CountryOption[] {
 
 function collectPlatformOptions(works: WorkItem[]): PlatformOption[] {
   const seen = new Map<string, PlatformOption>();
+  const countryPriority = new Map<string, number>();
 
   for (const work of works) {
     for (const link of work.links) {
       const meta = getPlatformMeta(link.platform);
+      const countryId = getCountryMeta(link.country).id;
+      const priority = countryId === "kr" ? 0 : countryId === "jp" ? 1 : 2;
+
       if (!seen.has(meta.id)) {
         seen.set(meta.id, {
           id: meta.id,
@@ -365,10 +369,20 @@ function collectPlatformOptions(works: WorkItem[]): PlatformOption[] {
           tone: meta.tone,
         });
       }
+
+      countryPriority.set(
+        meta.id,
+        Math.min(countryPriority.get(meta.id) ?? Number.MAX_SAFE_INTEGER, priority),
+      );
     }
   }
 
-  return Array.from(seen.values()).sort((left, right) => left.name.localeCompare(right.name));
+  return Array.from(seen.values()).sort((left, right) => {
+    const priorityDifference =
+      (countryPriority.get(left.id) ?? 2) - (countryPriority.get(right.id) ?? 2);
+
+    return priorityDifference || left.name.localeCompare(right.name);
+  });
 }
 
 function compactText(value: string) {
@@ -406,11 +420,15 @@ function getCardLinkPriority(link: WorkLink) {
     return 4;
   }
 
-  if (link.language === "en") {
+  if (countryId === "jp") {
     return 5;
   }
 
-  return 6;
+  if (link.language === "en") {
+    return 6;
+  }
+
+  return 7;
 }
 
 function sortCardLinks(links: WorkLink[]) {
