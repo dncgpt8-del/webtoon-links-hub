@@ -964,7 +964,7 @@ export default function Home() {
         </section>
 
       <footer className="footer">
-        <strong>🌐 <span>🏠</span></strong>
+        <strong>🌐 WEBTOON LINKS</strong>
         <div>{copy.footerNote}</div>
       </footer>
     </main>
