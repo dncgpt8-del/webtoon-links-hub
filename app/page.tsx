@@ -986,7 +986,7 @@ function Header({
     <header className="topbar" id="top">
       <button className="brand" onClick={onHome} type="button">
         <span>🏠</span>
-        <span>🏠</span>
+        HOME
       </button>
       <div className="topbar-actions">
         <button
@@ -1054,6 +1054,7 @@ function WorkCard({
     </article>
   );
 }
+
 
 
 
