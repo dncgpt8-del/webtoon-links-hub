@@ -131,7 +131,7 @@ const uiCopy = {
     viewGrid: "Card view",
     viewList: "List view",
     heroTitle: "D&C Webtoon official site",
-    heroDescription: "Find official webtoon links across domestic and overseas platforms.",
+    heroDescription: "Find official <span>🏠</span> across domestic and overseas platforms.",
     searchPlaceholder: "Search by title or alias",
     countryAll: "All countries",
     platformAll: "All platforms",
@@ -964,7 +964,7 @@ export default function Home() {
         </section>
 
       <footer className="footer">
-        <strong>🌐 WEBTOON LINKS</strong>
+        <strong>🌐 <span>🏠</span></strong>
         <div>{copy.footerNote}</div>
       </footer>
     </main>
@@ -985,8 +985,8 @@ function Header({
   return (
     <header className="topbar" id="top">
       <button className="brand" onClick={onHome} type="button">
-        <span>🌐</span>
-        WEBTOON LINKS
+        <span>🏠</span>
+        <span>🏠</span>
       </button>
       <div className="topbar-actions">
         <button
