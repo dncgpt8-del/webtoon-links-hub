@@ -527,7 +527,7 @@ function LinkRow({
   onCopy,
   uiLocale,
 }: {
-  copiedKey: string | null;
+  copiedKey: string | null;HOME
   copy: CopyMap;
   link: WorkLink;
   onCopy: (value: string, key: string) => void;
