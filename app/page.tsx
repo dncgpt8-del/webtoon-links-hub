@@ -1064,7 +1064,10 @@ function Header({
   return (
     <header className="topbar" id="top">
       <button className="brand" onClick={onHome} type="button">
-        <span>🏠</span>
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="m3 11 9-8 9 8" />
+          <path d="M5 10v10h14V10M9 20v-6h6v6" />
+        </svg>
         HOME
       </button>
       <div className="topbar-actions">
