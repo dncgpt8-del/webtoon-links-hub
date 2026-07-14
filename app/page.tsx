@@ -514,12 +514,24 @@ function IconButton({
 function PlatformBadge({ platformId }: { platformId: string }) {
   const platform = getPlatformMeta(platformId);
   const normalizedPlatformName = platform.name.replace(/\s+/g, "").toLowerCase();
-  const logoKey =
-    normalizedPlatformName === "교보문고"
-      ? "교보"
-      : normalizedPlatformName === "webcomicsapp"
-        ? "webcomics"
-        : normalizedPlatformName;
+  let logoKey = normalizedPlatformName;
+
+  if (
+    normalizedPlatformName.includes("레진") ||
+    normalizedPlatformName.includes("lezhin")
+  ) {
+    logoKey = "레진";
+  } else if (
+    normalizedPlatformName.includes("카카오웹툰") ||
+    normalizedPlatformName.includes("kakaowebtoon") ||
+    normalizedPlatformName === "kakaopage(th)"
+  ) {
+    logoKey = "카카오웹툰";
+  } else if (normalizedPlatformName === "교보문고") {
+    logoKey = "교보";
+  } else if (normalizedPlatformName === "webcomicsapp") {
+    logoKey = "webcomics";
+  }
   const logo = platformLogos[logoKey];
 
   return (
