@@ -187,10 +187,49 @@ a {
 }
 
 .hero-main p {
-  margin: 16px 0 30px;
+  margin: 16px 0 20px;
   color: #344054;
   font-size: 16px;
   font-weight: 600;
+}
+
+.social-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.social-links a {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 999px;
+  color: #475467;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.social-links a:hover,
+.social-links a:focus-visible {
+  background: var(--violet-soft);
+  color: var(--violet);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+.social-links svg {
+  width: 27px;
+  height: 27px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
 }
 
 .search-box {

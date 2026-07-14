@@ -883,6 +883,61 @@ export default function Home() {
           </h1>
           <p>{copy.heroDescription}</p>
 
+          <nav className="social-links" aria-label="디앤씨웹툰 공식 채널">
+            <a
+              aria-label="디앤씨미디어 홈페이지"
+              href="https://dncmedia.co.kr/"
+              rel="noreferrer"
+              target="_blank"
+              title="홈페이지"
+            >
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
+              </svg>
+            </a>
+            <a
+              aria-label="디앤씨웹툰 X"
+              href="https://x.com/dncwebtoon3"
+              rel="noreferrer"
+              target="_blank"
+              title="X"
+            >
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path
+                  d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.451-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"
+                  fill="currentColor"
+                  stroke="none"
+                />
+              </svg>
+            </a>
+            <a
+              aria-label="디앤씨웹툰 유튜브"
+              href="https://www.youtube.com/@DNCWEBTOON"
+              rel="noreferrer"
+              target="_blank"
+              title="유튜브"
+            >
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <rect x="2.5" y="5.5" width="19" height="13" rx="4" />
+                <path d="m10 9 5 3-5 3Z" fill="currentColor" stroke="none" />
+              </svg>
+            </a>
+            <a
+              aria-label="디앤씨웹툰 인스타그램"
+              href="https://www.instagram.com/dnc_webtoon/"
+              rel="noreferrer"
+              target="_blank"
+              title="인스타그램"
+            >
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            </a>
+          </nav>
+
           <label className="search-box">
             <span>⌕</span>
             <input
